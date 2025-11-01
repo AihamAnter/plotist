@@ -1,0 +1,50 @@
+Movie Guess Game
+
+Friends play a guessing game while watching a movie together. The website doesn’t stream the movie — it only helps them play. The movie’s name, poster, and rating come automatically from TMDb.
+
+Name of the website
+
+Plotist
+
+How it works
+
+Create a game
+One person becomes the host. They type a movie title. 
+The website finds it and shows the poster and rating. 
+A unique game link or code is created.
+
+Join the game
+Friends join using that link or code. 
+Each one writes their name and a small password so the site knows who’s who. 
+No need to register or log in.
+
+Round one – before watching
+Each player writes a guess about what the movie will be about. 
+The guesses appear, but no one knows who wrote what. 
+Players rate each guess from 1 to 10.
+After you rate someone’s guess, their name appears only to you. 
+This way, everyone rates fairly. 
+When everyone’s done, the host locks the round. After locking, all names are revealed.
+
+Watching and more rounds
+Players watch the movie on their own screens.
+Anyone can say “pause” and start a new round.
+In each round, players make new guesses, like what might happen next.
+Others rate them again. They can edit or delete their guesses until the host locks the round.
+This can happen as many times as they want during the movie.
+
+Final step – after the movie
+When the movie ends, the host opens the final voting stage. 
+Everyone votes if each guess was correct or wrong. 
+If most players say it’s correct, it counts as correct. 
+If it’s a tie, the host decides.
+
+Scoring
+For each guess, the site takes the average of all ratings it got. 
+If the guess was correct, the player gains that average as points. 
+If it was wrong, they lose the same amount. 
+All points are added up for the final score.
+
+Scoreboard
+After voting, everyone can see the final scores. 
+It shows who guessed best throughout the movie.

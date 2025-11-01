@@ -1,0 +1,49 @@
+Framework: Laravel 10
+Database: MySQL
+Frontend: Blade templates (HTML, CSS, JS)
+Architecture: MVC pattern
+API: REST (JSON) using POST, GET, PUT, DELETE
+Realtime: Laravel WebSockets or Pusher/Ably for live updates
+External API: TMDb API to fetch movie title, poster, and rating
+Version Control: Git + GitHub for all project changes
+Progress Journal: /docs/journal.md to log daily updates
+
+System Workflow:
+
+Host creates a game by entering a movie name.
+The site fetches details from TMDb and generates a unique game code.
+
+Players join using the game code, entering their name and a small password.
+No registration or login is needed.
+
+During rounds, players make guesses and rate others anonymously. Realtime updates show new guesses and ratings instantly. The host locks the round when everyone is done.
+
+After the movie, players vote on whether guesses were correct or incorrect. Scores are calculated automatically based on the average of ratings.
+
+A final scoreboard displays total scores for all players.
+
+Main Features:
+
+Full CRUD operations for games, players, rounds, guesses, and ratings.
+
+Realtime gameplay using WebSockets.
+
+Anonymous guessing until a player rates a guess.
+
+Scoring based on the average of received ratings.
+
+One movie per game.
+
+No login or registration system; only name + password per game.
+
+Project Setup:
+
+Laravel 10 project connected to a MySQL database.
+
+Environment variables for TMDb and WebSocket keys.
+
+Blade templates for frontend pages.
+
+REST API routes handle all core features.
+
+GitHub repository used for version control and collaboration.
