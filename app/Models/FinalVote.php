@@ -2,10 +2,35 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\FinalDecision;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FinalVote extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'guess_id',
+        'voter_player_id',
+        'decision',
+    ];
+
+    protected $casts = [
+        'decision' => FinalDecision::class,
+    ];
+
+    public function guess(): BelongsTo
+    {
+        return $this->belongsTo(Guess::class);
+    }
+
+    public function voter(): BelongsTo
+    {
+        return $this->belongsTo(Player::class, 'voter_player_id');
+    }
+
+    // scopes
+    public function scopeForGuess($q, int $guessId)
+    {
+        return $q->where('guess_id', $guessId);
+    }
 }
