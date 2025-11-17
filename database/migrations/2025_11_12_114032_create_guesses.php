@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->decimal('avg_rating', 4, 2)->nullable(); // cached, recomputed on rating changes
             $table->timestamps();
 
-            $table->index(['round_id', 'player_id']);
+            $table->index(['round_id', 'player_id']); //add
         });
     }
 
