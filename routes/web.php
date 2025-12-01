@@ -27,4 +27,5 @@ Route::get('/plotist/createGame', function () {
 
 Route::get('/plotist/{id}', function ($id) {
     return App\Models\plotist::find($id);
+    
 });
