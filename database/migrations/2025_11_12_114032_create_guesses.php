@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
-    {
+    {//new
         Schema::create('guesses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('round_id')->constrained('rounds')->cascadeOnDelete();
