@@ -13,35 +13,28 @@ use App\Http\Controllers\Api\V1\MoviesController;
 
 Route::prefix('v1')->group(function () {
 
-    // Games
-    Route::post('/games', [GamesController::class, 'store']);              // create game
-    Route::get('/games/{code}', [GamesController::class, 'show']);         // game info (optional for later)
+    Route::post('/games', [GamesController::class, 'store']);             
+    Route::get('/games/{code}', [GamesController::class, 'show']);         
 
-    // Players
-    Route::post('/games/{code}/players', [PlayersController::class, 'store']); // join
-    Route::get('/games/{code}/players', [PlayersController::class, 'index']);  // list
+    Route::post('/games/{code}/players', [PlayersController::class, 'store']); 
+    Route::get('/games/{code}/players', [PlayersController::class, 'index']);  
 
-    // Rounds
-    Route::post('/games/{code}/rounds', [RoundsController::class, 'store']);   // start new round (host)
-    Route::get('/games/{code}/rounds', [RoundsController::class, 'index']);    // list rounds
-    Route::put('/rounds/{id}/lock', [RoundsController::class, 'lock']);        // lock round (host)
+    Route::post('/games/{code}/rounds', [RoundsController::class, 'store']);   
+    Route::get('/games/{code}/rounds', [RoundsController::class, 'index']);  
+    Route::put('/rounds/{id}/lock', [RoundsController::class, 'lock']);        
 
-    // Guesses
-    Route::post('/rounds/{id}/guesses', [GuessesController::class, 'store']);  // create guess
-    Route::get('/rounds/{id}/guesses', [GuessesController::class, 'index']);   // list guesses (with author rules)
+    Route::post('/rounds/{id}/guesses', [GuessesController::class, 'store']); 
+    Route::get('/rounds/{id}/guesses', [GuessesController::class, 'index']);  
+    Route::put('/guesses/{id}', [GuessesController::class, 'update']);      
+    Route::delete('/guesses/{id}', [GuessesController::class, 'destroy']);     
 
-    // Ratings
-    Route::post('/guesses/{id}/ratings', [RatingsController::class, 'store']); // create rating (history)
-    // (optional later) Route::delete('/ratings/{id}', ...)
+    Route::post('/guesses/{id}/ratings', [RatingsController::class, 'store']); 
 
-    // Final votes
-    Route::post('/guesses/{id}/final-votes', [FinalVotesController::class, 'store']); // vote correct/incorrect
+    Route::post('/guesses/{id}/final-votes', [FinalVotesController::class, 'store']); 
 
-    // Scoring + scoreboard
     Route::post('/games/{code}/compute-scores', [ScoreboardController::class, 'compute']);
     Route::get('/games/{code}/scoreboard', [ScoreboardController::class, 'show']);
 
-    // TMDb
     Route::get('/movies/search', [MoviesController::class, 'search']);
     Route::post('/movies/pick', [MoviesController::class, 'pick']);
 });

@@ -32,6 +32,9 @@ class Game extends Model
         $this->attributes['host_password'] = bcrypt($value);
     }
 
+    protected $hidden = ['host_password'];
+
+
     public function players(): HasMany
     {
         return $this->hasMany(Player::class);

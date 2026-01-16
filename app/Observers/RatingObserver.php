@@ -23,10 +23,6 @@ class RatingObserver
         $this->recomputeGuessAverage($rating->guess_id);
     }
 
-    /**
-     * Average of the latest rating per rater for this guess.
-     * (We keep history; newest per rater is active.)
-     */
     protected function recomputeGuessAverage(int $guessId): void
     {
         // subquery: pick latest rating id per (rater, guess)

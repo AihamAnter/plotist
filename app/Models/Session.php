@@ -22,7 +22,6 @@ class Session extends Model
         return $this->belongsTo(Player::class);
     }
 
-    // scopes
     public function scopeValid($q)
     {
         return $q->where('expires_at', '>', now());

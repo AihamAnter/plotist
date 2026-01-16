@@ -28,7 +28,6 @@ class FinalVote extends Model
         return $this->belongsTo(Player::class, 'voter_player_id');
     }
 
-    // scopes
     public function scopeForGuess($q, int $guessId)
     {
         return $q->where('guess_id', $guessId);

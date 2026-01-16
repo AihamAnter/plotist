@@ -1,41 +1,48 @@
 @extends('layouts.app')
 
-@section('subtitle', 'Create Game')
-
 @section('content')
-  <div class="grid" style="grid-template-columns: 1fr;">
-    <div class="card">
-      <h2 style="margin:0 0 8px 0;">Create Game</h2>
-      <p class="muted">Pick a movie from TMDb, set host name and password. A share code will be generated.</p>
-      <div class="hr"></div>
-
-      <form id="create-form" class="grid" style="grid-template-columns: 1fr; gap:12px;">
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
-          <div>
-            <label>Host name</label>
-            <input name="host_name" placeholder="e.g. Ali" required>
-          </div>
-          <div>
-            <label>Host password</label>
-            <input name="host_password" type="password" placeholder="min 4 chars" required>
-          </div>
-        </div>
-
-        <div class="row">
-          <div style="flex:1">
-            <label>Search movie (TMDb)</label>
-            <input id="movie-q" placeholder="e.g. Inception">
-          </div>
-          <button type="button" class="btn" id="btn-search">Search</button>
-        </div>
-
-        <div id="results" class="list"></div>
-
-        <div class="right">
-          <button class="btn primary" type="submit">Create Game</button>
-        </div>
-      </form>
+  <div class="hero">
+    <div class="title">Plotist</div>
+    <div class="desc">
+      Friends guessing the plot of a movie<br>
+      while watching together, start a new<br>
+      game or join an existing one
     </div>
+  </div>
+
+  <div class="tabs">
+    <a class="tab active" href="/">Create</a>
+    <a class="tab" href="/join">Join</a>
+  </div>
+
+  <div class="panel">
+    <div class="panel-row" style="margin-bottom:14px;">
+      <div class="field" style="flex:1;">
+        <div class="label">Host name</div>
+        <input class="input" id="host_name" placeholder="e.g. Ali">
+      </div>
+      <div class="field" style="flex:1;">
+        <div class="label">Password</div>
+        <input class="input" id="host_password" type="password" placeholder="min 4 chars">
+      </div>
+    </div>
+
+    <div class="panel-row">
+      <div class="field" style="flex:1;">
+        <div class="label">Find A Movie</div>
+        <input class="input" id="movie-q" placeholder="Search movie title...">
+      </div>
+      <button type="button" class="icon-btn" id="btn-search">🔍</button>
+    </div>
+
+    <div style="margin-top:14px;" id="picked" hidden></div>
+    <div style="margin-top:14px;" id="results"></div>
+
+    <div class="center-actions" style="margin-top:18px;">
+      <button type="button" class="big-btn" id="btn-create">Create</button>
+    </div>
+
+    <div class="muted" id="status" style="text-align:center; margin-top:10px;"></div>
   </div>
 @endsection
 
@@ -43,55 +50,125 @@
 <script>
   let picked = null;
 
+  function showPicked(){
+    const box = q('#picked');
+    if (!picked) {
+      box.hidden = true;
+      box.innerHTML = '';
+      return;
+    }
+
+    box.hidden = false;
+    box.innerHTML = `
+      <div class="panel" style="padding:14px; background:#efebe2;">
+        <div style="font-weight:700;">Picked:</div>
+        <div class="muted" style="color:#3c3c3c;">
+          ${picked.title} (${picked.release_year ?? ''}) · TMDb ${picked.vote_average ?? 'n/a'}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderResults(results){
+    const wrap = q('#results');
+    wrap.innerHTML = '';
+
+    const list = document.createElement('div');
+    list.style.display = 'grid';
+    list.style.gap = '10px';
+    wrap.appendChild(list);
+
+    results.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'panel';
+      row.style.padding = '12px';
+      row.style.background = '#efebe2';
+
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+          <div>
+            <div style="font-weight:700;">
+              ${m.title} <span class="muted" style="color:#3c3c3c;">(${m.release_year ?? ''})</span>
+            </div>
+            <div class="muted" style="color:#3c3c3c;">TMDb: ${m.vote_average ?? 'n/a'}</div>
+          </div>
+          <button type="button" class="icon-btn" data-pick="${m.id}">Pick</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    qa('[data-pick]').forEach(b => {
+      b.onclick = () => {
+        picked = results.find(x => String(x.id) === String(b.dataset.pick));
+        toast(`Picked: ${picked?.title}`);
+        showPicked();
+      };
+    });
+  }
+
   q('#btn-search').addEventListener('click', async () => {
     const qv = q('#movie-q').value.trim();
     if (!qv) return;
-    const data = await api(`${API}/movies/search?q=${encodeURIComponent(qv)}`);
-    const list = q('#results'); list.innerHTML = '';
-    (data.results || []).slice(0,8).forEach(m => {
-      const item = document.createElement('div'); item.className='list-item';
-      item.innerHTML = `
-        <div class="row" style="justify-content:space-between">
-          <div>
-            <div><strong>${m.title}</strong> <span class="muted">(${m.release_year ?? ''})</span></div>
-            <div class="muted">TMDb: ${m.vote_average ?? 'n/a'}</div>
-          </div>
-          <button class="btn" data-pick="${m.id}">Pick</button>
-        </div>`;
-      list.appendChild(item);
-    });
 
-    qa('[data-pick]').forEach(b => b.onclick = () => {
-      picked = (data.results || []).find(x => x.id == b.dataset.pick);
-      toast(`Picked: ${picked?.title}`);
-    });
+    q('#status').textContent = 'Searching...';
+
+    try {
+      const data = await api(`${API}/movies/search?q=${encodeURIComponent(qv)}`);
+      const results = (data.results || []).slice(0, 8);
+
+      if (results.length === 0) {
+        q('#status').textContent = 'No results.';
+        renderResults([]);
+        return;
+      }
+
+      q('#status').textContent = `Found ${results.length} movies`;
+      renderResults(results);
+    } catch (err) {
+      console.log(err);
+      q('#status').textContent = 'Search failed.';
+      toast('Search failed', false);
+    }
   });
 
-  q('#create-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const fd = Object.fromEntries(new FormData(e.target).entries());
-    if (!picked) { toast('Pick a movie first', false); return; }
+  q('#btn-create').addEventListener('click', async () => {
+    const host_name = (q('#host_name').value || '').trim();
+    const host_password = (q('#host_password').value || '').trim();
 
-    // 1) Create game
-    const created = await api(`${API}/games`, {
-      method: 'POST',
-      body: {
-        host_name: fd.host_name,
-        host_password: fd.host_password,
-      }
-    });
+    if (!host_name) return toast('Enter host name', false);
+    if (!host_password) return toast('Enter host password', false);
+    if (!picked) return toast('Pick a movie first', false);
 
-    // 2) Attach movie
-    await api(`${API}/movies/pick`, {
-      method: 'POST',
-      body: {
-        code: created.code,
-        tmdb_id: picked.id,
-      }
-    });
+    const btn = q('#btn-create');
+    btn.disabled = true;
+    q('#status').textContent = 'Creating game...';
 
-    // Go to lobby
-    location.href = `/g/${created.code}`;
+    try {
+      const created = await api(`${API}/games`, {
+        method: 'POST',
+        body: { host_name, host_password }
+      });
+
+      const code = created.code;
+      if (!code) throw new Error('Create failed: missing game code');
+
+      await api(`${API}/movies/pick`, {
+        method: 'POST',
+        body: { code, tmdb_id: picked.id }
+      });
+
+      q('#status').textContent = 'Going to lobby...';
+      location.href = `/g/${code}`;
+    } catch (err) {
+      console.log(err);
+      q('#status').textContent = err.message || 'Create failed.';
+      toast(err.message || 'Create failed', false);
+    } finally {
+      btn.disabled = false;
+    }
   });
+
+  showPicked();
 </script>
 @endsection

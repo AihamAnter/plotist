@@ -45,7 +45,6 @@ class Player extends Model
         return $this->hasMany(Session::class);
     }
 
-    // scopes
     public function scopeForGame($q, int $gameId)
     {
         return $q->where('game_id', $gameId);

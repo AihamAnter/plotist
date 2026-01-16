@@ -41,7 +41,6 @@ class Guess extends Model
         return $this->hasMany(FinalVote::class);
     }
 
-    // scopes
     public function scopeForRound($q, int $roundId)
     {
         return $q->where('round_id', $roundId);
